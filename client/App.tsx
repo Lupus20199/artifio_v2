@@ -55,7 +55,10 @@ const App = () => (
             <Route path="/solutii/performanta" element={<PerformanceTool />} />
             <Route path="/solutii/reputatie" element={<ReputationTool />} />
             <Route path="/instrumente/vizibilitate-ai" element={<ToolA />} />
-            <Route path="/instrumente/performanta" element={<PerformanceTool />} />
+            <Route
+              path="/instrumente/performanta"
+              element={<PerformanceTool />}
+            />
             <Route path="/instrumente/reputatie" element={<ReputationTool />} />
             <Route path="/tool-a" element={<ToolA />} />
             <Route path="/despre-notch" element={<DespreNotch />} />

@@ -53,10 +53,17 @@ export default function Login() {
     try {
       setSubmitting(true);
       await loginWithEmailPassword(email, password, { gdprConsent: true });
-      toast({ title: "Bine ai revenit!", description: "Autentificare reușită." });
+      toast({
+        title: "Bine ai revenit!",
+        description: "Autentificare reușită.",
+      });
       navigate("/");
     } catch (err: any) {
-      toast({ title: "Eroare la autentificare", description: err?.message || "Încearcă din nou.", variant: "destructive" });
+      toast({
+        title: "Eroare la autentificare",
+        description: err?.message || "Încearcă din nou.",
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -64,18 +71,29 @@ export default function Login() {
 
   const handleSocialLogin = async (provider: string) => {
     if (!gdprConsent) {
-      setErrors((e) => ({ ...e, gdpr: "Trebuie să accepți termenii și condițiile" }));
+      setErrors((e) => ({
+        ...e,
+        gdpr: "Trebuie să accepți termenii și condițiile",
+      }));
       return;
     }
     try {
       setSubmitting(true);
       if (provider === "Google") await loginWithGoogle({ gdprConsent: true });
-      else if (provider === "Facebook") await loginWithFacebook({ gdprConsent: true });
+      else if (provider === "Facebook")
+        await loginWithFacebook({ gdprConsent: true });
       else return;
-      toast({ title: "Bine ai venit!", description: `Autentificat cu ${provider}.` });
+      toast({
+        title: "Bine ai venit!",
+        description: `Autentificat cu ${provider}.`,
+      });
       navigate("/");
     } catch (err: any) {
-      toast({ title: "Eroare la autentificare", description: err?.message || "Încearcă din nou.", variant: "destructive" });
+      toast({
+        title: "Eroare la autentificare",
+        description: err?.message || "Încearcă din nou.",
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -84,16 +102,26 @@ export default function Login() {
   const handlePasswordReset = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!email) {
-      setErrors((prev) => ({ ...prev, email: "Introdu emailul pentru resetare parolă" }));
+      setErrors((prev) => ({
+        ...prev,
+        email: "Introdu emailul pentru resetare parolă",
+      }));
       return;
     }
     const { sendPasswordResetEmail } = await import("firebase/auth");
     const { auth } = await import("@/lib/firebase");
     try {
       await sendPasswordResetEmail(auth, email);
-      toast({ title: "Email trimis", description: "Verifică-ți inbox-ul pentru resetarea parolei." });
+      toast({
+        title: "Email trimis",
+        description: "Verifică-ți inbox-ul pentru resetarea parolei.",
+      });
     } catch (err: any) {
-      toast({ title: "Eroare la resetare", description: err?.message || "Încearcă din nou.", variant: "destructive" });
+      toast({
+        title: "Eroare la resetare",
+        description: err?.message || "Încearcă din nou.",
+        variant: "destructive",
+      });
     }
   };
 

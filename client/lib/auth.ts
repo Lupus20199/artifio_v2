@@ -63,7 +63,10 @@ export async function registerWithEmailPassword(
 ) {
   const cred = await createUserWithEmailAndPassword(auth, email, password);
   if (fullName) await updateProfile(cred.user, { displayName: fullName });
-  await ensureUserDocument(cred.user, { displayName: fullName || cred.user.displayName, ...extra });
+  await ensureUserDocument(cred.user, {
+    displayName: fullName || cred.user.displayName,
+    ...extra,
+  });
   return cred.user;
 }
 

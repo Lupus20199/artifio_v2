@@ -71,18 +71,29 @@ export default function Register() {
 
   const handleSocialLogin = async (provider: string) => {
     if (!gdprConsent) {
-      setErrors((e) => ({ ...e, gdpr: "Trebuie să accepți termenii și condițiile" }));
+      setErrors((e) => ({
+        ...e,
+        gdpr: "Trebuie să accepți termenii și condițiile",
+      }));
       return;
     }
     try {
       setSubmitting(true);
       if (provider === "Google") await loginWithGoogle({ gdprConsent: true });
-      else if (provider === "Facebook") await loginWithFacebook({ gdprConsent: true });
+      else if (provider === "Facebook")
+        await loginWithFacebook({ gdprConsent: true });
       else return;
-      toast({ title: "Bine ai venit!", description: `Autentificat cu ${provider}.` });
+      toast({
+        title: "Bine ai venit!",
+        description: `Autentificat cu ${provider}.`,
+      });
       navigate("/");
     } catch (err: any) {
-      toast({ title: "Eroare la autentificare", description: err?.message || "Încearcă din nou.", variant: "destructive" });
+      toast({
+        title: "Eroare la autentificare",
+        description: err?.message || "Încearcă din nou.",
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }

@@ -87,10 +87,18 @@ export default function Navbar({ currentPage }: NavbarProps) {
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuLabel>Cont</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate("/settings")}>Setări</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/despre-notch")}>Despre Notch</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/settings")}>
+                    Setări
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/despre-notch")}>
+                    Despre Notch
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => import("@/lib/auth").then(m => m.logout())}>Logout</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => import("@/lib/auth").then((m) => m.logout())}
+                  >
+                    Logout
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -140,7 +148,12 @@ export default function Navbar({ currentPage }: NavbarProps) {
               </Link>
             ) : (
               <div className="mt-4 space-y-2">
-                <div className="px-3 py-2 text-sm text-muted-foreground">Conectat ca <span className="text-foreground font-medium">{displayName}</span></div>
+                <div className="px-3 py-2 text-sm text-muted-foreground">
+                  Conectat ca{" "}
+                  <span className="text-foreground font-medium">
+                    {displayName}
+                  </span>
+                </div>
                 <Link
                   to="/settings"
                   className="block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover:bg-muted/50"
@@ -148,7 +161,7 @@ export default function Navbar({ currentPage }: NavbarProps) {
                   Setări
                 </Link>
                 <button
-                  onClick={() => import("@/lib/auth").then(m => m.logout())}
+                  onClick={() => import("@/lib/auth").then((m) => m.logout())}
                   className="w-full text-left px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover:bg-muted/50"
                 >
                   Logout
