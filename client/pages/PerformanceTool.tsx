@@ -21,7 +21,10 @@ interface FormData {
 }
 
 type Importance = "critical" | "very_important" | "vital" | "normal";
-interface Recommendation { text: string; importance: Importance }
+interface Recommendation {
+  text: string;
+  importance: Importance;
+}
 interface AnalysisResult {
   website: string;
   performanceScore: number;
@@ -73,13 +76,34 @@ export default function PerformanceTool() {
         seoScore: roundForRun(Math.random() * 35 + 65, isFirstRun, 0),
         bestPracticesScore: roundForRun(Math.random() * 25 + 75, isFirstRun, 0),
         recommendations: [
-          { text: "Optimizează imaginile pentru încărcare mai rapidă", importance: "critical" },
-          { text: "Îmbunătățește contrastul culorilor pentru accesibilitate", importance: "very_important" },
-          { text: "Adaugă atribute alt la toate imaginile", importance: "vital" },
-          { text: "Reduce timpul de încărcare JavaScript", importance: "critical" },
-          { text: "Implementează lazy loading pentru imagini", importance: "vital" },
-          { text: "Optimizează structura headingurilor (H1, H2, H3)", importance: "very_important" },
-          { text: "Adaugă meta descripții pentru toate paginile", importance: "normal" },
+          {
+            text: "Optimizează imaginile pentru încărcare mai rapidă",
+            importance: "critical",
+          },
+          {
+            text: "Îmbunătățește contrastul culorilor pentru accesibilitate",
+            importance: "very_important",
+          },
+          {
+            text: "Adaugă atribute alt la toate imaginile",
+            importance: "vital",
+          },
+          {
+            text: "Reduce timpul de încărcare JavaScript",
+            importance: "critical",
+          },
+          {
+            text: "Implementează lazy loading pentru imagini",
+            importance: "vital",
+          },
+          {
+            text: "Optimizează structura headingurilor (H1, H2, H3)",
+            importance: "very_important",
+          },
+          {
+            text: "Adaugă meta descripții pentru toate paginile",
+            importance: "normal",
+          },
         ],
       });
       setIsLoading(false);
@@ -204,7 +228,9 @@ export default function PerformanceTool() {
                   aria-label="Download"
                   onClick={() => {
                     if (!results) return;
-                    const blob = new Blob([JSON.stringify(results, null, 2)], { type: "application/json" });
+                    const blob = new Blob([JSON.stringify(results, null, 2)], {
+                      type: "application/json",
+                    });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
@@ -283,7 +309,9 @@ export default function PerformanceTool() {
                         key={index}
                         className={`flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30 border-l-4 ${colorMap[rec.importance]}`}
                       >
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{tagMap[rec.importance]}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                          {tagMap[rec.importance]}
+                        </span>
                         <span className="text-muted-foreground text-sm leading-relaxed flex-1">
                           {rec.text}
                         </span>
@@ -297,7 +325,9 @@ export default function PerformanceTool() {
                 <button
                   onClick={() => {
                     if (!results) return;
-                    const blob = new Blob([JSON.stringify(results, null, 2)], { type: "application/json" });
+                    const blob = new Blob([JSON.stringify(results, null, 2)], {
+                      type: "application/json",
+                    });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;

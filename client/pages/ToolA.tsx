@@ -27,7 +27,10 @@ interface FormData {
 }
 
 type Importance = "critical" | "very_important" | "vital" | "normal";
-interface Recommendation { text: string; importance: Importance }
+interface Recommendation {
+  text: string;
+  importance: Importance;
+}
 interface AnalysisResult {
   inputValue: string;
   inputType: InputType;
@@ -87,11 +90,23 @@ export default function ToolA() {
         score: roundForRun(Math.random() * 100, isFirstRun, 0),
         visibility: roundForRun(Math.random() * 50 + 10, isFirstRun, 0),
         recommendations: [
-          { text: "Optimizează meta descrierea pentru cuvinte cheie AI", importance: "very_important" },
+          {
+            text: "Optimizează meta descrierea pentru cuvinte cheie AI",
+            importance: "very_important",
+          },
           { text: "Adaugă schema markup pentru produse", importance: "vital" },
-          { text: "Îmbunătățește structura headingurilor", importance: "critical" },
-          { text: "Creează conținut FAQ optimizat pentru AI", importance: "normal" },
-          { text: "Adaugă informații de contact structurate", importance: "vital" },
+          {
+            text: "Îmbunătățește structura headingurilor",
+            importance: "critical",
+          },
+          {
+            text: "Creează conținut FAQ optimizat pentru AI",
+            importance: "normal",
+          },
+          {
+            text: "Adaugă informații de contact structurate",
+            importance: "vital",
+          },
         ],
       });
       setIsLoading(false);
@@ -257,7 +272,9 @@ export default function ToolA() {
                   aria-label="Download"
                   onClick={() => {
                     if (!results) return;
-                    const blob = new Blob([JSON.stringify(results, null, 2)], { type: "application/json" });
+                    const blob = new Blob([JSON.stringify(results, null, 2)], {
+                      type: "application/json",
+                    });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
@@ -325,7 +342,9 @@ export default function ToolA() {
                         key={index}
                         className={`flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30 border-l-4 ${colorMap[rec.importance]}`}
                       >
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{tagMap[rec.importance]}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                          {tagMap[rec.importance]}
+                        </span>
                         <span className="text-muted-foreground text-sm leading-relaxed flex-1">
                           {rec.text}
                         </span>
@@ -339,7 +358,9 @@ export default function ToolA() {
                 <button
                   onClick={() => {
                     if (!results) return;
-                    const blob = new Blob([JSON.stringify(results, null, 2)], { type: "application/json" });
+                    const blob = new Blob([JSON.stringify(results, null, 2)], {
+                      type: "application/json",
+                    });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
