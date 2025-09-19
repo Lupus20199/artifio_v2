@@ -26,6 +26,13 @@ interface FormData {
   inputType: InputType;
 }
 
+type Importance = "critical" | "very_important" | "vital" | "normal";
+
+interface Recommendation {
+  text: string;
+  importance: Importance;
+}
+
 interface AnalysisResult {
   inputValue: string;
   inputType: InputType;
@@ -39,7 +46,7 @@ interface AnalysisResult {
     mentions: number;
     sentiment: "positive" | "neutral" | "negative";
   }[];
-  recommendations: string[];
+  recommendations: Recommendation[];
 }
 
 export default function ReputationTool() {
@@ -114,7 +121,7 @@ export default function ReputationTool() {
         ],
         recommendations: [
           "Monitorizează Google Reviews săptămânal pentru răspunsuri rapide",
-          "Creează conținut FAQ pentru îmbunătățirea reputa��iei AI",
+          "Creează conținut FAQ pentru îmbunătățirea reputa����iei AI",
           "Implementează un sistem de colectare feedback pozitiv",
           "Răspunde la toate review-urile în maxim 24 ore",
           "Optimizează profilurile sociale pentru căutări AI",
