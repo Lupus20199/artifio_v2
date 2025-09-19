@@ -399,7 +399,7 @@ const NotchLandingPage = () => {
                   onPress={() => openLink("tel:+40721234567")}
                 >
                   <Text style={styles.contactIcon}>📞</Text>
-                  <Text style={styles.contactText}>+40 721 234 567</Text>
+                  <Text style={styles.contactText}>+40 760 560 346</Text>
                 </TouchableOpacity>
                 <View style={styles.contactItem}>
                   <Text style={styles.contactIcon}>📍</Text>

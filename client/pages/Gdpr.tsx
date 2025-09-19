@@ -413,7 +413,7 @@ export default function Gdpr() {
                       <Phone className="w-4 h-4 text-primary" />
                       <span className="text-muted-foreground">Telefon: </span>
                       <span className="text-card-foreground">
-                        +40 721 234 567 (ext. 100)
+                        +40 760 560 346 (ext. 100)
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
@@ -520,7 +520,7 @@ export default function Gdpr() {
                         href="tel:+40721234567"
                         className="text-primary hover:text-primary/80"
                       >
-                        +40 721 234 567
+                        +40 760 560 346
                       </a>
                     </div>
                     <div className="flex items-center gap-3">
@@ -640,7 +640,7 @@ export default function Gdpr() {
                     href="tel:+40721234567"
                     className="hover:text-foreground transition-colors"
                   >
-                    +40 721 234 567
+                    +40 760 560 346
                   </a>
                 </li>
                 <li className="flex items-center gap-2">

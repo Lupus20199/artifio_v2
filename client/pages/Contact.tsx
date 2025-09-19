@@ -70,7 +70,7 @@ export default function Contact() {
       icon: <Phone className="w-6 h-6" />,
       title: "Telefon",
       description: "Luni-Vineri 09:00-18:00",
-      contact: "+40 721 234 567",
+      contact: "+40 760 560 346",
       action: "tel:+40721234567",
       color: "text-green-500",
       bgColor: "bg-green-500/10",
@@ -396,7 +396,7 @@ export default function Contact() {
                           href="tel:+40721234567"
                           className="text-lg font-semibold text-primary hover:text-primary/80 transition-colors"
                         >
-                          +40 721 234 567
+                          +40 760 560 346
                         </a>
                         <p className="text-xs text-muted-foreground mt-1">
                           Luni-Vineri 09:00-18:00
@@ -642,7 +642,7 @@ export default function Contact() {
                     href="tel:+40721234567"
                     className="hover:text-foreground transition-colors"
                   >
-                    +40 721 234 567
+                    +40 760 560 346
                   </a>
                 </li>
                 <li className="flex items-center gap-2">

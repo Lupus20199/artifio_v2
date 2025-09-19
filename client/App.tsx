@@ -1,5 +1,6 @@
 import "./global.css";
-
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -24,12 +25,24 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// ScrollToTop component
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/solutii" element={<Solutions />} />
@@ -66,12 +79,10 @@ const App = () => (
 // Avoid double mounting in development
 const container = document.getElementById("root")!;
 
-// Check if root is already defined on the container
 if (!(container as any)._reactRoot) {
   const root = createRoot(container);
   (container as any)._reactRoot = root;
   root.render(<App />);
 } else {
-  // Reuse existing root
   (container as any)._reactRoot.render(<App />);
 }
