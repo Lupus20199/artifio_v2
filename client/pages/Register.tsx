@@ -9,8 +9,15 @@ import {
   Phone,
   UserPlus,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import {
+  registerWithEmailPassword,
+  loginWithGoogle,
+  loginWithFacebook,
+} from "@/lib/auth";
 
 export default function Register() {
   const [fullName, setFullName] = useState("");
@@ -21,8 +28,11 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [gdprConsent, setGdprConsent] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [submitting, setSubmitting] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
@@ -39,14 +49,43 @@ export default function Register() {
 
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length === 0) {
-      // Process registration
-      console.log("Registration attempt:", { fullName, email, password });
+    if (Object.keys(newErrors).length !== 0) return;
+
+    try {
+      setSubmitting(true);
+      await registerWithEmailPassword(fullName, email, password, {
+        gdprConsent: true,
+      });
+      toast({ title: "Cont creat!", description: "Te-am conectat automat." });
+      navigate("/");
+    } catch (err: any) {
+      toast({
+        title: "Eroare la înregistrare",
+        description: err?.message || "Încearcă din nou.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleSocialLogin = (provider: string) => {
-    console.log(`Register with ${provider}`);
+  const handleSocialLogin = async (provider: string) => {
+    if (!gdprConsent) {
+      setErrors((e) => ({ ...e, gdpr: "Trebuie să accepți termenii și condițiile" }));
+      return;
+    }
+    try {
+      setSubmitting(true);
+      if (provider === "Google") await loginWithGoogle({ gdprConsent: true });
+      else if (provider === "Facebook") await loginWithFacebook({ gdprConsent: true });
+      else return;
+      toast({ title: "Bine ai venit!", description: `Autentificat cu ${provider}.` });
+      navigate("/");
+    } catch (err: any) {
+      toast({ title: "Eroare la autentificare", description: err?.message || "Încearcă din nou.", variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -251,7 +290,8 @@ export default function Register() {
                 {/* Register Button */}
                 <button
                   type="submit"
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-3 rounded-lg text-sm font-semibold transition-all transform hover:scale-[1.02] shadow-lg flex items-center justify-center gap-2"
+                  disabled={submitting}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-3 rounded-lg text-sm font-semibold transition-all transform hover:scale-[1.02] shadow-lg flex items-center justify-center gap-2 disabled:opacity-70"
                 >
                   Register
                   <ChevronRight className="w-4 h-4" />
@@ -275,7 +315,8 @@ export default function Register() {
             <div className="space-y-3 mb-6">
               <button
                 onClick={() => handleSocialLogin("Google")}
-                className="w-full bg-card border border-border hover:bg-accent text-card-foreground px-4 py-3 rounded-lg text-sm font-medium transition-all hover:shadow-md flex items-center justify-center gap-3"
+                disabled={submitting}
+                className="w-full bg-card border border-border hover:bg-accent text-card-foreground px-4 py-3 rounded-lg text-sm font-medium transition-all hover:shadow-md flex items-center justify-center gap-3 disabled:opacity-70"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -300,7 +341,8 @@ export default function Register() {
 
               <button
                 onClick={() => handleSocialLogin("Facebook")}
-                className="w-full bg-card border border-border hover:bg-accent text-card-foreground px-4 py-3 rounded-lg text-sm font-medium transition-all hover:shadow-md flex items-center justify-center gap-3"
+                disabled={submitting}
+                className="w-full bg-card border border-border hover:bg-accent text-card-foreground px-4 py-3 rounded-lg text-sm font-medium transition-all hover:shadow-md flex items-center justify-center gap-3 disabled:opacity-70"
               >
                 <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -309,8 +351,9 @@ export default function Register() {
               </button>
 
               <button
-                onClick={() => handleSocialLogin("Guest")}
-                className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-3 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-3"
+                onClick={() => {}}
+                disabled
+                className="w-full bg-secondary text-secondary-foreground px-4 py-3 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-3 opacity-60 cursor-not-allowed"
               >
                 <User className="w-5 h-5" />
                 Continuă ca vizitator
