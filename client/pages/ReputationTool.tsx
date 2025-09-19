@@ -94,49 +94,52 @@ export default function ReputationTool() {
         return;
       }
 
-      setResults({
+      const isFirstRun = !previous;
+      const newResults: AnalysisResult = {
         inputValue: formData.inputValue,
         inputType: formData.inputType,
-        overallRating: (Math.random() * 2 + 3.5).toFixed(1), // 3.5-5.0 rating
-        sentimentScore: Math.floor(Math.random() * 30) + 70, // 70-100%
-        mentionsFound: Math.floor(Math.random() * 150) + 50, // 50-200 mentions
-        competitorComparison: Math.floor(Math.random() * 40) + 60, // 60-100%
+        overallRating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+        sentimentScore: roundForRun(Math.random() * 30 + 70, isFirstRun, 0),
+        mentionsFound: roundForRun(Math.random() * 150 + 50, isFirstRun, 0),
+        competitorComparison: roundForRun(Math.random() * 40 + 60, isFirstRun, 0),
         platforms: [
           {
             name: "Google Reviews",
-            rating: (Math.random() * 1.5 + 3.5).toFixed(1),
-            mentions: Math.floor(Math.random() * 50) + 20,
+            rating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+            mentions: roundForRun(Math.random() * 50 + 20, isFirstRun, 0),
             sentiment: Math.random() > 0.3 ? "positive" : "neutral",
           },
           {
             name: "Facebook",
-            rating: (Math.random() * 1.5 + 3.5).toFixed(1),
-            mentions: Math.floor(Math.random() * 30) + 10,
+            rating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+            mentions: roundForRun(Math.random() * 30 + 10, isFirstRun, 0),
             sentiment: Math.random() > 0.4 ? "positive" : "neutral",
           },
           {
             name: "AI Responses",
-            rating: (Math.random() * 1.5 + 3.5).toFixed(1),
-            mentions: Math.floor(Math.random() * 25) + 15,
+            rating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+            mentions: roundForRun(Math.random() * 25 + 15, isFirstRun, 0),
             sentiment: Math.random() > 0.2 ? "positive" : "neutral",
           },
           {
             name: "Forums & Blogs",
-            rating: (Math.random() * 1.5 + 3.5).toFixed(1),
-            mentions: Math.floor(Math.random() * 20) + 8,
+            rating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+            mentions: roundForRun(Math.random() * 20 + 8, isFirstRun, 0),
             sentiment: Math.random() > 0.5 ? "positive" : "neutral",
           },
         ],
         recommendations: [
-          "Monitorizează Google Reviews săptămânal pentru răspunsuri rapide",
-          "Creează conținut FAQ pentru îmbunătățirea reputa��iei AI",
-          "Implementează un sistem de colectare feedback pozitiv",
-          "Răspunde la toate review-urile în maxim 24 ore",
-          "Optimizează profilurile sociale pentru căutări AI",
-          "Dezvoltă o strategie de content marketing pozitivă",
-          "Monitorizează mențiunile brandului în timp real",
+          { text: "Monitorizează Google Reviews săptămânal pentru răspunsuri rapide", importance: "very_important" },
+          { text: "Creează conținut FAQ pentru îmbunătățirea reputației AI", importance: "vital" },
+          { text: "Implementează un sistem de colectare feedback pozitiv", importance: "critical" },
+          { text: "Răspunde la toate review-urile în maxim 24 ore", importance: "very_important" },
+          { text: "Optimizează profilurile sociale pentru căutări AI", importance: "vital" },
+          { text: "Dezvoltă o strategie de content marketing pozitivă", importance: "normal" },
+          { text: "Monitorizează mențiunile brandului în timp real", importance: "very_important" },
         ],
-      });
+      };
+      if (previous) setPrevResults(previous);
+      setResults(newResults);
       setIsLoading(false);
     }, 3000);
   };
@@ -452,7 +455,7 @@ export default function ReputationTool() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="text-center">
                   <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center mx-auto mb-4 text-white font-bold">
-                    ⭐
+                    ���
                   </div>
                   <h4 className="font-semibold text-foreground mb-2">
                     Rating & Review-uri
