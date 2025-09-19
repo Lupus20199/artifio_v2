@@ -74,7 +74,13 @@ export default function ReputationTool() {
 
     setIsLoading(true);
     setError("");
+    const previous = results;
     setResults(null);
+
+    const roundForRun = (value: number, isFirst: boolean, decimals = 0) => {
+      const m = Math.pow(10, decimals);
+      return (isFirst ? Math.floor(value * m) : Math.ceil(value * m)) / m;
+    };
 
     // Simulate API call with potential error
     setTimeout(() => {
@@ -176,7 +182,7 @@ export default function ReputationTool() {
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Monitorizează și analizează reputația business-ului tău online și
-              în răspunsurile AI.
+              ��n răspunsurile AI.
               <span className="text-amber-500 font-medium block mt-2">
                 Rezultate în 30 de secunde.
               </span>
