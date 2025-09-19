@@ -14,6 +14,7 @@ import {
   ArrowRight,
   TrendingUp,
   MessageCircle,
+  ArrowDown,
 } from "lucide-react";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
