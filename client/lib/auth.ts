@@ -3,27 +3,28 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
+  createUserWithEmailAndPassword,
   User,
 } from "firebase/auth";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc, getDoc } from "firebase/firestore";
 import { auth, db, googleProvider, facebookProvider } from "./firebase";
 
 async function ensureUserDocument(user: User, extra: Record<string, any> = {}) {
   const ref = doc(db, "users", user.uid);
-  await setDoc(
-    ref,
-    {
-      uid: user.uid,
-      email: user.email || null,
-      displayName: user.displayName || null,
-      photoURL: user.photoURL || null,
-      providerId: user.providerData?.[0]?.providerId || null,
-      lastLoginAt: serverTimestamp(),
-      createdAt: serverTimestamp(),
-      ...extra,
-    },
-    { merge: true },
-  );
+  const snap = await getDoc(ref);
+  const base = {
+    uid: user.uid,
+    email: user.email || null,
+    displayName: user.displayName || null,
+    photoURL: user.photoURL || null,
+    providerId: user.providerData?.[0]?.providerId || null,
+    lastLoginAt: serverTimestamp(),
+    ...extra,
+  } as Record<string, any>;
+  if (!snap.exists()) {
+    base.createdAt = serverTimestamp();
+  }
+  await setDoc(ref, base, { merge: true });
 }
 
 export async function loginWithEmailPassword(
@@ -52,6 +53,18 @@ export async function updateDisplayName(name: string) {
   if (!auth.currentUser) return;
   await updateProfile(auth.currentUser, { displayName: name });
   await ensureUserDocument(auth.currentUser, { displayName: name });
+}
+
+export async function registerWithEmailPassword(
+  fullName: string,
+  email: string,
+  password: string,
+  extra: Record<string, any> = {},
+) {
+  const cred = await createUserWithEmailAndPassword(auth, email, password);
+  if (fullName) await updateProfile(cred.user, { displayName: fullName });
+  await ensureUserDocument(cred.user, { displayName: fullName || cred.user.displayName, ...extra });
+  return cred.user;
 }
 
 export async function logout() {
