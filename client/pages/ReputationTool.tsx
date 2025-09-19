@@ -321,7 +321,23 @@ export default function ReputationTool() {
           {/* Results Section */}
           {results && (
             <div className="bg-card border border-border rounded-2xl p-6 lg:p-8 mb-10">
-              <div className="text-center mb-8">
+              <div className="text-center mb-8 relative">
+                <button
+                  aria-label="Download"
+                  onClick={() => {
+                    if (!results) return;
+                    const blob = new Blob([JSON.stringify(results, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "reputation-report.json";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="absolute right-0 -top-2 p-2 rounded-full bg-purple-600 text-white hover:bg-purple-700 shadow"
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </button>
                 <h2 className="text-2xl font-bold text-card-foreground mb-2">
                   Rezultatele Analizei de Reputație
                 </h2>
@@ -455,7 +471,7 @@ export default function ReputationTool() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="text-center">
                   <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center mx-auto mb-4 text-white font-bold">
-                    ���
+                    ⭐
                   </div>
                   <h4 className="font-semibold text-foreground mb-2">
                     Rating & Review-uri
