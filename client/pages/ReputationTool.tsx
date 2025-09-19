@@ -511,17 +511,31 @@ export default function ReputationTool() {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border/30">
-                <button className="flex-1 bg-amber-500 text-white hover:bg-amber-600 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-[1.02]">
-                  Descarcă Raport Complet
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  onClick={() => {
+                    if (!results) return;
+                    const blob = new Blob([JSON.stringify(results, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "reputation-report.json";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="bg-amber-500 text-white hover:bg-amber-600 px-6 py-3 rounded-xl font-medium transition-all duration-200"
+                >
+                  Descarcă Raport
                 </button>
+              </div>
+              <div className="flex flex-col gap-3 pt-6 border-t border-border/30">
                 <button
                   onClick={() => {
                     setResults(null);
                     setFormData({ inputValue: "", inputType: "business" });
                     setError("");
                   }}
-                  className="flex-1 bg-secondary text-secondary-foreground hover:bg-secondary/80 px-6 py-3 rounded-xl font-medium transition-all duration-200"
+                  className="w-full border border-border bg-transparent hover:bg-muted px-6 py-3 rounded-xl font-medium transition-all duration-200"
                 >
                   Analiză Nouă
                 </button>
