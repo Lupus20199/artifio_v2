@@ -56,7 +56,9 @@ export default function ReputationTool() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<AnalysisResult | null>(null);
+  const [prevResults, setPrevResults] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState<"overview" | "reviews">("overview");
 
   const handleInputTypeToggle = (type: InputType) => {
     setFormData((prev) => ({
@@ -121,7 +123,7 @@ export default function ReputationTool() {
         ],
         recommendations: [
           "Monitorizează Google Reviews săptămânal pentru răspunsuri rapide",
-          "Creează conținut FAQ pentru îmbunătățirea reputa����iei AI",
+          "Creează conținut FAQ pentru îmbunătățirea reputa��iei AI",
           "Implementează un sistem de colectare feedback pozitiv",
           "Răspunde la toate review-urile în maxim 24 ore",
           "Optimizează profilurile sociale pentru căutări AI",
