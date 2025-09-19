@@ -387,6 +387,59 @@ export default function ReputationTool() {
                 </div>
               </div>
 
+              {/* Tabs */}
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <button
+                  onClick={() => setActiveTab("overview")}
+                  className={`px-4 py-2 rounded-full text-sm border ${activeTab === "overview" ? "bg-muted/50 border-border" : "bg-transparent hover:bg-muted/30 border-transparent"}`}
+                >
+                  Overview
+                </button>
+                <button
+                  onClick={() => setActiveTab("reviews")}
+                  className={`px-4 py-2 rounded-full text-sm border ${activeTab === "reviews" ? "bg-muted/50 border-border" : "bg-transparent hover:bg-muted/30 border-transparent"}`}
+                >
+                  Reviews
+                </button>
+              </div>
+
+              {activeTab === "reviews" && (
+                <div className="mb-8">
+                  <h3 className="text-lg font-semibold text-card-foreground mb-4">Comparație Reviews</h3>
+                  {prevResults ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {results.platforms.map((platform, index) => {
+                        const prev = prevResults.platforms.find(p => p.name === platform.name);
+                        const growth = prev ? platform.mentions - prev.mentions : platform.mentions;
+                        return (
+                          <div key={index} className="p-4 bg-muted/20 rounded-lg border border-border/30">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium">{platform.name}</span>
+                              <span className="text-sm">⭐ {platform.rating.toFixed(1)}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="text-sm text-muted-foreground">Inițial</div>
+                                <div className="text-lg font-semibold">{prev ? prev.mentions : 0} recenzii</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-sm text-muted-foreground">Acum</div>
+                                <div className="text-lg font-semibold">{platform.mentions} recenzii</div>
+                                {growth > 0 && (
+                                  <div className="text-green-600 font-medium">+{growth} noi</div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">Rulați analiza de două ori pentru a vedea comparația review-urilor.</div>
+                  )}
+                </div>
+              )}
+
               {/* Platform Breakdown */}
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-card-foreground mb-4">
