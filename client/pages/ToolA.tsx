@@ -14,6 +14,7 @@ import {
   ArrowRight,
   Info,
   X,
+  ArrowDown,
 } from "lucide-react";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
@@ -25,12 +26,17 @@ interface FormData {
   inputType: InputType;
 }
 
+type Importance = "critical" | "very_important" | "vital" | "normal";
+interface Recommendation {
+  text: string;
+  importance: Importance;
+}
 interface AnalysisResult {
   inputValue: string;
   inputType: InputType;
   score: number;
   visibility: number;
-  recommendations: string[];
+  recommendations: Recommendation[];
 }
 
 export default function ToolA() {
@@ -57,7 +63,13 @@ export default function ToolA() {
 
     setIsLoading(true);
     setError("");
+    const previous = results;
     setResults(null);
+
+    const roundForRun = (value: number, isFirst: boolean, decimals = 0) => {
+      const m = Math.pow(10, decimals);
+      return (isFirst ? Math.floor(value * m) : Math.ceil(value * m)) / m;
+    };
 
     // Simulate API call with potential error
     setTimeout(() => {
@@ -71,17 +83,30 @@ export default function ToolA() {
         return;
       }
 
+      const isFirstRun = !previous;
       setResults({
         inputValue: formData.inputValue,
         inputType: formData.inputType,
-        score: Math.floor(Math.random() * 100),
-        visibility: Math.floor(Math.random() * 50) + 10,
+        score: roundForRun(Math.random() * 100, isFirstRun, 0),
+        visibility: roundForRun(Math.random() * 50 + 10, isFirstRun, 0),
         recommendations: [
-          "Optimizează meta descrierea pentru cuvinte cheie AI",
-          "Adaugă schema markup pentru produse",
-          "Îmbunătățește structura headingurilor",
-          "Creează conținut FAQ optimizat pentru AI",
-          "Adaugă informații de contact structurate",
+          {
+            text: "Optimizează meta descrierea pentru cuvinte cheie AI",
+            importance: "very_important",
+          },
+          { text: "Adaugă schema markup pentru produse", importance: "vital" },
+          {
+            text: "Îmbunătățește structura headingurilor",
+            importance: "critical",
+          },
+          {
+            text: "Creează conținut FAQ optimizat pentru AI",
+            importance: "normal",
+          },
+          {
+            text: "Adaugă informații de contact structurate",
+            importance: "vital",
+          },
         ],
       });
       setIsLoading(false);
@@ -242,7 +267,25 @@ export default function ToolA() {
           {/* Results Section */}
           {results && (
             <div className="bg-card border border-border rounded-2xl p-6 lg:p-8 mb-10">
-              <div className="text-center mb-8">
+              <div className="text-center mb-8 relative">
+                <button
+                  aria-label="Download"
+                  onClick={() => {
+                    if (!results) return;
+                    const blob = new Blob([JSON.stringify(results, null, 2)], {
+                      type: "application/json",
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "visibility-report.json";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="absolute right-0 -top-2 p-2 rounded-full bg-purple-600 text-white hover:bg-purple-700 shadow"
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </button>
                 <h2 className="text-2xl font-bold text-card-foreground mb-2">
                   Rezultatele Analizei AI
                 </h2>
@@ -281,23 +324,53 @@ export default function ToolA() {
                   Recomandări pentru optimizare:
                 </h3>
                 <div className="space-y-3">
-                  {results.recommendations.map((rec: string, index: number) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30"
-                    >
-                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-muted-foreground text-sm leading-relaxed">
-                        {rec}
-                      </span>
-                    </div>
-                  ))}
+                  {results.recommendations.map((rec, index: number) => {
+                    const colorMap: Record<Importance, string> = {
+                      critical: "border-red-500",
+                      very_important: "border-orange-500",
+                      vital: "border-yellow-400",
+                      normal: "border-slate-300",
+                    };
+                    const tagMap: Record<Importance, string> = {
+                      critical: "Critic",
+                      very_important: "Foarte important",
+                      vital: "Vital",
+                      normal: "Info",
+                    };
+                    return (
+                      <div
+                        key={index}
+                        className={`flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30 border-l-4 ${colorMap[rec.importance]}`}
+                      >
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                          {tagMap[rec.importance]}
+                        </span>
+                        <span className="text-muted-foreground text-sm leading-relaxed flex-1">
+                          {rec.text}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border/30">
-                <button className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-[1.02]">
-                  Descarcă Raport Complet
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  onClick={() => {
+                    if (!results) return;
+                    const blob = new Blob([JSON.stringify(results, null, 2)], {
+                      type: "application/json",
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "visibility-report.json";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-xl font-medium transition-all duration-200"
+                >
+                  Descarcă Raport
                 </button>
                 <button
                   onClick={() => setShowModal(true)}
@@ -306,13 +379,15 @@ export default function ToolA() {
                   <Info className="w-4 h-4" />
                   Algoritm
                 </button>
+              </div>
+              <div className="flex flex-col gap-3 pt-6 border-t border-border/30">
                 <button
                   onClick={() => {
                     setResults(null);
                     setFormData({ inputValue: "", inputType: "url" });
                     setError("");
                   }}
-                  className="flex-1 bg-secondary text-secondary-foreground hover:bg-secondary/80 px-6 py-3 rounded-xl font-medium transition-all duration-200"
+                  className="w-full border border-border bg-transparent hover:bg-muted px-6 py-3 rounded-xl font-medium transition-all duration-200"
                 >
                   Analiză Nouă
                 </button>

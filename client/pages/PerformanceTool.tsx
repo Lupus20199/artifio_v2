@@ -11,6 +11,7 @@ import {
   Sparkles,
   Zap,
   ArrowRight,
+  ArrowDown,
 } from "lucide-react";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
@@ -19,13 +20,18 @@ interface FormData {
   website: string;
 }
 
+type Importance = "critical" | "very_important" | "vital" | "normal";
+interface Recommendation {
+  text: string;
+  importance: Importance;
+}
 interface AnalysisResult {
   website: string;
   performanceScore: number;
   accessibilityScore: number;
   seoScore: number;
   bestPracticesScore: number;
-  recommendations: string[];
+  recommendations: Recommendation[];
 }
 
 export default function PerformanceTool() {
@@ -42,7 +48,13 @@ export default function PerformanceTool() {
 
     setIsLoading(true);
     setError("");
+    const previous = results;
     setResults(null);
+
+    const roundForRun = (value: number, isFirst: boolean, decimals = 0) => {
+      const m = Math.pow(10, decimals);
+      return (isFirst ? Math.floor(value * m) : Math.ceil(value * m)) / m;
+    };
 
     // Simulate API call with potential error
     setTimeout(() => {
@@ -56,20 +68,42 @@ export default function PerformanceTool() {
         return;
       }
 
+      const isFirstRun = !previous;
       setResults({
         website: formData.website,
-        performanceScore: Math.floor(Math.random() * 40) + 60,
-        accessibilityScore: Math.floor(Math.random() * 30) + 70,
-        seoScore: Math.floor(Math.random() * 35) + 65,
-        bestPracticesScore: Math.floor(Math.random() * 25) + 75,
+        performanceScore: roundForRun(Math.random() * 40 + 60, isFirstRun, 0),
+        accessibilityScore: roundForRun(Math.random() * 30 + 70, isFirstRun, 0),
+        seoScore: roundForRun(Math.random() * 35 + 65, isFirstRun, 0),
+        bestPracticesScore: roundForRun(Math.random() * 25 + 75, isFirstRun, 0),
         recommendations: [
-          "Optimizează imaginile pentru încărcare mai rapidă",
-          "Îmbunătățește contrastul culorilor pentru accesibilitate",
-          "Adaugă atribute alt la toate imaginile",
-          "Reduce timpul de încărcare JavaScript",
-          "Implementează lazy loading pentru imagini",
-          "Optimizează structura headingurilor (H1, H2, H3)",
-          "Adaugă meta descripții pentru toate paginile",
+          {
+            text: "Optimizează imaginile pentru încărcare mai rapidă",
+            importance: "critical",
+          },
+          {
+            text: "Îmbunătățește contrastul culorilor pentru accesibilitate",
+            importance: "very_important",
+          },
+          {
+            text: "Adaugă atribute alt la toate imaginile",
+            importance: "vital",
+          },
+          {
+            text: "Reduce timpul de încărcare JavaScript",
+            importance: "critical",
+          },
+          {
+            text: "Implementează lazy loading pentru imagini",
+            importance: "vital",
+          },
+          {
+            text: "Optimizează structura headingurilor (H1, H2, H3)",
+            importance: "very_important",
+          },
+          {
+            text: "Adaugă meta descripții pentru toate paginile",
+            importance: "normal",
+          },
         ],
       });
       setIsLoading(false);
@@ -97,7 +131,7 @@ export default function PerformanceTool() {
               Evaluează viteza și accesibilitatea site-ului tău pentru o
               experiență optimă.
               <span className="text-green-500 font-medium block mt-2">
-                Rezultate în 30 de secunde.
+                Rezultate ��n 30 de secunde.
               </span>
             </p>
           </div>
@@ -189,7 +223,25 @@ export default function PerformanceTool() {
           {/* Results Section */}
           {results && (
             <div className="bg-card border border-border rounded-2xl p-6 lg:p-8 mb-10">
-              <div className="text-center mb-8">
+              <div className="text-center mb-8 relative">
+                <button
+                  aria-label="Download"
+                  onClick={() => {
+                    if (!results) return;
+                    const blob = new Blob([JSON.stringify(results, null, 2)], {
+                      type: "application/json",
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "performance-report.json";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="absolute right-0 -top-2 p-2 rounded-full bg-purple-600 text-white hover:bg-purple-700 shadow"
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </button>
                 <h2 className="text-2xl font-bold text-card-foreground mb-2">
                   Rezultatele Analizei de Performanță
                 </h2>
@@ -239,31 +291,63 @@ export default function PerformanceTool() {
                   Recomandări pentru optimizare:
                 </h3>
                 <div className="space-y-3">
-                  {results.recommendations.map((rec: string, index: number) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30"
-                    >
-                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-muted-foreground text-sm leading-relaxed">
-                        {rec}
-                      </span>
-                    </div>
-                  ))}
+                  {results.recommendations.map((rec, index: number) => {
+                    const colorMap: Record<Importance, string> = {
+                      critical: "border-red-500",
+                      very_important: "border-orange-500",
+                      vital: "border-yellow-400",
+                      normal: "border-slate-300",
+                    };
+                    const tagMap: Record<Importance, string> = {
+                      critical: "Critic",
+                      very_important: "Foarte important",
+                      vital: "Vital",
+                      normal: "Info",
+                    };
+                    return (
+                      <div
+                        key={index}
+                        className={`flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30 border-l-4 ${colorMap[rec.importance]}`}
+                      >
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                          {tagMap[rec.importance]}
+                        </span>
+                        <span className="text-muted-foreground text-sm leading-relaxed flex-1">
+                          {rec.text}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border/30">
-                <button className="flex-1 bg-green-500 text-white hover:bg-green-600 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-[1.02]">
-                  Descarcă Raport Complet
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  onClick={() => {
+                    if (!results) return;
+                    const blob = new Blob([JSON.stringify(results, null, 2)], {
+                      type: "application/json",
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "performance-report.json";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 rounded-xl font-medium transition-all duration-200"
+                >
+                  Descarcă Raport
                 </button>
+              </div>
+              <div className="flex flex-col gap-3 pt-6 border-t border-border/30">
                 <button
                   onClick={() => {
                     setResults(null);
                     setFormData({ website: "" });
                     setError("");
                   }}
-                  className="flex-1 bg-secondary text-secondary-foreground hover:bg-secondary/80 px-6 py-3 rounded-xl font-medium transition-all duration-200"
+                  className="w-full border border-border bg-transparent hover:bg-muted px-6 py-3 rounded-xl font-medium transition-all duration-200"
                 >
                   Test Nou
                 </button>

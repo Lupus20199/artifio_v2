@@ -14,6 +14,7 @@ import {
   ArrowRight,
   TrendingUp,
   MessageCircle,
+  ArrowDown,
 } from "lucide-react";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
@@ -23,6 +24,13 @@ type InputType = "url" | "business";
 interface FormData {
   inputValue: string;
   inputType: InputType;
+}
+
+type Importance = "critical" | "very_important" | "vital" | "normal";
+
+interface Recommendation {
+  text: string;
+  importance: Importance;
 }
 
 interface AnalysisResult {
@@ -38,7 +46,7 @@ interface AnalysisResult {
     mentions: number;
     sentiment: "positive" | "neutral" | "negative";
   }[];
-  recommendations: string[];
+  recommendations: Recommendation[];
 }
 
 export default function ReputationTool() {
@@ -48,7 +56,9 @@ export default function ReputationTool() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<AnalysisResult | null>(null);
+  const [prevResults, setPrevResults] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState<"overview" | "reviews">("overview");
 
   const handleInputTypeToggle = (type: InputType) => {
     setFormData((prev) => ({
@@ -64,7 +74,13 @@ export default function ReputationTool() {
 
     setIsLoading(true);
     setError("");
+    const previous = results;
     setResults(null);
+
+    const roundForRun = (value: number, isFirst: boolean, decimals = 0) => {
+      const m = Math.pow(10, decimals);
+      return (isFirst ? Math.floor(value * m) : Math.ceil(value * m)) / m;
+    };
 
     // Simulate API call with potential error
     setTimeout(() => {
@@ -78,49 +94,52 @@ export default function ReputationTool() {
         return;
       }
 
-      setResults({
+      const isFirstRun = !previous;
+      const newResults: AnalysisResult = {
         inputValue: formData.inputValue,
         inputType: formData.inputType,
-        overallRating: (Math.random() * 2 + 3.5).toFixed(1), // 3.5-5.0 rating
-        sentimentScore: Math.floor(Math.random() * 30) + 70, // 70-100%
-        mentionsFound: Math.floor(Math.random() * 150) + 50, // 50-200 mentions
-        competitorComparison: Math.floor(Math.random() * 40) + 60, // 60-100%
+        overallRating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+        sentimentScore: roundForRun(Math.random() * 30 + 70, isFirstRun, 0),
+        mentionsFound: roundForRun(Math.random() * 150 + 50, isFirstRun, 0),
+        competitorComparison: roundForRun(Math.random() * 40 + 60, isFirstRun, 0),
         platforms: [
           {
             name: "Google Reviews",
-            rating: (Math.random() * 1.5 + 3.5).toFixed(1),
-            mentions: Math.floor(Math.random() * 50) + 20,
+            rating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+            mentions: roundForRun(Math.random() * 50 + 20, isFirstRun, 0),
             sentiment: Math.random() > 0.3 ? "positive" : "neutral",
           },
           {
             name: "Facebook",
-            rating: (Math.random() * 1.5 + 3.5).toFixed(1),
-            mentions: Math.floor(Math.random() * 30) + 10,
+            rating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+            mentions: roundForRun(Math.random() * 30 + 10, isFirstRun, 0),
             sentiment: Math.random() > 0.4 ? "positive" : "neutral",
           },
           {
             name: "AI Responses",
-            rating: (Math.random() * 1.5 + 3.5).toFixed(1),
-            mentions: Math.floor(Math.random() * 25) + 15,
+            rating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+            mentions: roundForRun(Math.random() * 25 + 15, isFirstRun, 0),
             sentiment: Math.random() > 0.2 ? "positive" : "neutral",
           },
           {
             name: "Forums & Blogs",
-            rating: (Math.random() * 1.5 + 3.5).toFixed(1),
-            mentions: Math.floor(Math.random() * 20) + 8,
+            rating: roundForRun(Math.random() * 1.5 + 3.5, isFirstRun, 1),
+            mentions: roundForRun(Math.random() * 20 + 8, isFirstRun, 0),
             sentiment: Math.random() > 0.5 ? "positive" : "neutral",
           },
         ],
         recommendations: [
-          "Monitorizează Google Reviews săptămânal pentru răspunsuri rapide",
-          "Creează conținut FAQ pentru îmbunătățirea reputa��iei AI",
-          "Implementează un sistem de colectare feedback pozitiv",
-          "Răspunde la toate review-urile în maxim 24 ore",
-          "Optimizează profilurile sociale pentru căutări AI",
-          "Dezvoltă o strategie de content marketing pozitivă",
-          "Monitorizează mențiunile brandului în timp real",
+          { text: "Monitorizează Google Reviews săptămânal pentru răspunsuri rapide", importance: "very_important" },
+          { text: "Creează conținut FAQ pentru îmbunătățirea reputației AI", importance: "vital" },
+          { text: "Implementează un sistem de colectare feedback pozitiv", importance: "critical" },
+          { text: "Răspunde la toate review-urile în maxim 24 ore", importance: "very_important" },
+          { text: "Optimizează profilurile sociale pentru căutări AI", importance: "vital" },
+          { text: "Dezvoltă o strategie de content marketing pozitivă", importance: "normal" },
+          { text: "Monitorizează mențiunile brandului în timp real", importance: "very_important" },
         ],
-      });
+      };
+      if (previous) setPrevResults(previous);
+      setResults(newResults);
       setIsLoading(false);
     }, 3000);
   };
@@ -166,7 +185,7 @@ export default function ReputationTool() {
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Monitorizează și analizează reputația business-ului tău online și
-              în răspunsurile AI.
+              ��n răspunsurile AI.
               <span className="text-amber-500 font-medium block mt-2">
                 Rezultate în 30 de secunde.
               </span>
@@ -302,7 +321,23 @@ export default function ReputationTool() {
           {/* Results Section */}
           {results && (
             <div className="bg-card border border-border rounded-2xl p-6 lg:p-8 mb-10">
-              <div className="text-center mb-8">
+              <div className="text-center mb-8 relative">
+                <button
+                  aria-label="Download"
+                  onClick={() => {
+                    if (!results) return;
+                    const blob = new Blob([JSON.stringify(results, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "reputation-report.json";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="absolute right-0 -top-2 p-2 rounded-full bg-purple-600 text-white hover:bg-purple-700 shadow"
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </button>
                 <h2 className="text-2xl font-bold text-card-foreground mb-2">
                   Rezultatele Analizei de Reputație
                 </h2>
@@ -352,6 +387,59 @@ export default function ReputationTool() {
                 </div>
               </div>
 
+              {/* Tabs */}
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <button
+                  onClick={() => setActiveTab("overview")}
+                  className={`px-4 py-2 rounded-full text-sm border ${activeTab === "overview" ? "bg-muted/50 border-border" : "bg-transparent hover:bg-muted/30 border-transparent"}`}
+                >
+                  Overview
+                </button>
+                <button
+                  onClick={() => setActiveTab("reviews")}
+                  className={`px-4 py-2 rounded-full text-sm border ${activeTab === "reviews" ? "bg-muted/50 border-border" : "bg-transparent hover:bg-muted/30 border-transparent"}`}
+                >
+                  Reviews
+                </button>
+              </div>
+
+              {activeTab === "reviews" && (
+                <div className="mb-8">
+                  <h3 className="text-lg font-semibold text-card-foreground mb-4">Comparație Reviews</h3>
+                  {prevResults ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {results.platforms.map((platform, index) => {
+                        const prev = prevResults.platforms.find(p => p.name === platform.name);
+                        const growth = prev ? platform.mentions - prev.mentions : platform.mentions;
+                        return (
+                          <div key={index} className="p-4 bg-muted/20 rounded-lg border border-border/30">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium">{platform.name}</span>
+                              <span className="text-sm">⭐ {platform.rating.toFixed(1)}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="text-sm text-muted-foreground">Inițial</div>
+                                <div className="text-lg font-semibold">{prev ? prev.mentions : 0} recenzii</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-sm text-muted-foreground">Acum</div>
+                                <div className="text-lg font-semibold">{platform.mentions} recenzii</div>
+                                {growth > 0 && (
+                                  <div className="text-green-600 font-medium">+{growth} noi</div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">Rulați analiza de două ori pentru a vedea comparația review-urilor.</div>
+                  )}
+                </div>
+              )}
+
               {/* Platform Breakdown */}
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-card-foreground mb-4">
@@ -395,31 +483,59 @@ export default function ReputationTool() {
                   Recomandări pentru îmbunătățirea reputației:
                 </h3>
                 <div className="space-y-3">
-                  {results.recommendations.map((rec: string, index: number) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30"
-                    >
-                      <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-muted-foreground text-sm leading-relaxed">
-                        {rec}
-                      </span>
-                    </div>
-                  ))}
+                  {results.recommendations.map((rec, index: number) => {
+                    const colorMap: Record<Importance, string> = {
+                      critical: "border-red-500",
+                      very_important: "border-orange-500",
+                      vital: "border-yellow-400",
+                      normal: "border-slate-300",
+                    };
+                    const tagMap: Record<Importance, string> = {
+                      critical: "Critic",
+                      very_important: "Foarte important",
+                      vital: "Vital",
+                      normal: "Info",
+                    };
+                    return (
+                      <div
+                        key={index}
+                        className={`flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30 border-l-4 ${colorMap[rec.importance]}`}
+                      >
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{tagMap[rec.importance]}</span>
+                        <span className="text-muted-foreground text-sm leading-relaxed flex-1">
+                          {rec.text}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border/30">
-                <button className="flex-1 bg-amber-500 text-white hover:bg-amber-600 px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-[1.02]">
-                  Descarcă Raport Complet
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  onClick={() => {
+                    if (!results) return;
+                    const blob = new Blob([JSON.stringify(results, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "reputation-report.json";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="bg-amber-500 text-white hover:bg-amber-600 px-6 py-3 rounded-xl font-medium transition-all duration-200"
+                >
+                  Descarcă Raport
                 </button>
+              </div>
+              <div className="flex flex-col gap-3 pt-6 border-t border-border/30">
                 <button
                   onClick={() => {
                     setResults(null);
                     setFormData({ inputValue: "", inputType: "business" });
                     setError("");
                   }}
-                  className="flex-1 bg-secondary text-secondary-foreground hover:bg-secondary/80 px-6 py-3 rounded-xl font-medium transition-all duration-200"
+                  className="w-full border border-border bg-transparent hover:bg-muted px-6 py-3 rounded-xl font-medium transition-all duration-200"
                 >
                   Analiză Nouă
                 </button>
