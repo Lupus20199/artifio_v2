@@ -483,17 +483,31 @@ export default function ReputationTool() {
                   Recomandări pentru îmbunătățirea reputației:
                 </h3>
                 <div className="space-y-3">
-                  {results.recommendations.map((rec: string, index: number) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30"
-                    >
-                      <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <span className="text-muted-foreground text-sm leading-relaxed">
-                        {rec}
-                      </span>
-                    </div>
-                  ))}
+                  {results.recommendations.map((rec, index: number) => {
+                    const colorMap: Record<Importance, string> = {
+                      critical: "border-red-500",
+                      very_important: "border-orange-500",
+                      vital: "border-yellow-400",
+                      normal: "border-slate-300",
+                    };
+                    const tagMap: Record<Importance, string> = {
+                      critical: "Critic",
+                      very_important: "Foarte important",
+                      vital: "Vital",
+                      normal: "Info",
+                    };
+                    return (
+                      <div
+                        key={index}
+                        className={`flex items-start gap-3 p-3 bg-muted/20 rounded-lg border border-border/30 border-l-4 ${colorMap[rec.importance]}`}
+                      >
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{tagMap[rec.importance]}</span>
+                        <span className="text-muted-foreground text-sm leading-relaxed flex-1">
+                          {rec.text}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
