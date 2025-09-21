@@ -126,7 +126,7 @@ export default function Settings() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     <Avatar className="h-20 w-20 ring-2 ring-primary/20">
                       <AvatarImage src={photoPreview || user.photoURL || undefined} />
                       <AvatarFallback className="text-lg">
@@ -150,16 +150,18 @@ export default function Settings() {
                           }
                         }}
                       />
-                      <div className="flex gap-2">
+                      <div className="flex flex-col gap-2 w-full sm:w-auto">
                         <Button
                           type="button"
                           variant="secondary"
+                          className="w-full sm:w-auto"
                           onClick={() => fileInputRef.current?.click()}
                         >
                           Alege fotografie
                         </Button>
                         <Button
                           type="button"
+                          className="w-full sm:w-auto"
                           disabled={!photoFile}
                           onClick={async () => {
                             try {
