@@ -4,10 +4,16 @@ import {
   signOut,
   updateProfile,
   createUserWithEmailAndPassword,
+  updatePassword as fbUpdatePassword,
+  updateEmail as fbUpdateEmail,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  deleteUser,
   User,
 } from "firebase/auth";
 import { doc, serverTimestamp, setDoc, getDoc } from "firebase/firestore";
-import { auth, db, googleProvider, facebookProvider } from "./firebase";
+import { auth, db, storage, googleProvider, facebookProvider } from "./firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 async function ensureUserDocument(user: User, extra: Record<string, any> = {}) {
   const ref = doc(db, "users", user.uid);
@@ -72,4 +78,46 @@ export async function registerWithEmailPassword(
 
 export async function logout() {
   await signOut(auth);
+}
+
+export async function updateProfilePhoto(file: File) {
+  if (!auth.currentUser) throw new Error("Nu ești autentificat");
+  const uid = auth.currentUser.uid;
+  const storageRef = ref(storage, `avatars/${uid}`);
+  const uploaded = await uploadBytes(storageRef, file, {
+    contentType: file.type || "image/jpeg",
+  });
+  const url = await getDownloadURL(uploaded.ref);
+  await updateProfile(auth.currentUser, { photoURL: url });
+  await ensureUserDocument(auth.currentUser, { photoURL: url });
+  return url;
+}
+
+export async function updatePasswordWithReauth(currentPassword: string, newPassword: string) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Nu ești autentificat");
+  if (!user.email) throw new Error("Contul nu are o adresă de email");
+  const cred = EmailAuthProvider.credential(user.email, currentPassword);
+  await reauthenticateWithCredential(user, cred);
+  await fbUpdatePassword(user, newPassword);
+  await ensureUserDocument(user, { passwordUpdatedAt: serverTimestamp() });
+}
+
+export async function updateEmailWithReauth(currentPassword: string, newEmail: string) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Nu ești autentificat");
+  if (!user.email) throw new Error("Contul nu are o adresă de email");
+  const cred = EmailAuthProvider.credential(user.email, currentPassword);
+  await reauthenticateWithCredential(user, cred);
+  await fbUpdateEmail(user, newEmail);
+  await ensureUserDocument(user, { email: newEmail });
+}
+
+export async function deleteAccountWithReauth(currentPassword: string) {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Nu ești autentificat");
+  if (!user.email) throw new Error("Contul nu are o adresă de email");
+  const cred = EmailAuthProvider.credential(user.email, currentPassword);
+  await reauthenticateWithCredential(user, cred);
+  await deleteUser(user);
 }
