@@ -90,9 +90,7 @@ export default function Navbar({ currentPage }: NavbarProps) {
                   <DropdownMenuItem onClick={() => navigate("/settings")}>
                     Setări
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/despre-notch")}>
-                    Despre Notch
-                  </DropdownMenuItem>
+         
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => import("@/lib/auth").then((m) => m.logout())}
