@@ -50,7 +50,6 @@ export default function Settings() {
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName || "");
-      setEmail(user.email || "");
       setNewEmail(user.email || "");
     }
   }, [user]);
