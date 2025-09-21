@@ -8,6 +8,7 @@ import {
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics, isSupported } from "firebase/analytics";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBLIXiCTPk1NfeI-xtLZriBL793B0oirUQ",
@@ -25,6 +26,7 @@ const auth = getAuth(app);
 setPersistence(auth, browserLocalPersistence);
 
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 let analytics: ReturnType<typeof getAnalytics> | null = null;
 if (typeof window !== "undefined") {
@@ -41,4 +43,4 @@ const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 facebookProvider.setCustomParameters({ display: "popup" });
 
-export { app, auth, db, googleProvider, facebookProvider };
+export { app, auth, db, storage, googleProvider, facebookProvider };
