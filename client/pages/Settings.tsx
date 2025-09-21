@@ -21,14 +21,13 @@ import {
   updateEmailWithReauth,
   deleteAccountWithReauth,
 } from "@/lib/auth";
-import { Mail, Lock, User2, Image as ImageIcon, Trash2 } from "lucide-react";
+import { Lock, User2, Image as ImageIcon, Trash2 } from "lucide-react";
 
 export default function Settings() {
   const { user, loading } = useAuth();
   const { toast } = useToast();
 
   const [displayName, setDisplayName] = useState("");
-  const [email, setEmail] = useState("");
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -166,6 +165,10 @@ export default function Settings() {
                           onClick={async () => {
                             try {
                               if (!photoFile) return;
+                              const max = 5 * 1024 * 1024;
+                              if (photoFile.size > max) {
+                                throw new Error("Fișierul depășește 5MB.");
+                              }
                               const url = await updateProfilePhoto(photoFile);
                               setPhotoFile(null);
                               setPhotoPreview(null);
