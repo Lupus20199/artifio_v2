@@ -119,7 +119,8 @@ export default function Settings() {
               <Card className="lg:col-span-1">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <ImageIcon className="h-5 w-5 text-primary" /> Fotografie profil
+                    <ImageIcon className="h-5 w-5 text-primary" /> Fotografie
+                    profil
                   </CardTitle>
                   <CardDescription>
                     Încarcă o fotografie clară pentru contul tău.
@@ -128,7 +129,9 @@ export default function Settings() {
                 <CardContent className="space-y-4">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     <Avatar className="h-20 w-20 ring-2 ring-primary/20">
-                      <AvatarImage src={photoPreview || user.photoURL || undefined} />
+                      <AvatarImage
+                        src={photoPreview || user.photoURL || undefined}
+                      />
                       <AvatarFallback className="text-lg">
                         {nameInitials(user.displayName || user.email || "")}
                       </AvatarFallback>
@@ -175,12 +178,15 @@ export default function Settings() {
                               setPhotoPreview(null);
                               toast({
                                 title: "Fotografie actualizată",
-                                description: "Imaginea de profil a fost schimbată cu succes.",
+                                description:
+                                  "Imaginea de profil a fost schimbată cu succes.",
                               });
                             } catch (e: any) {
                               toast({
                                 title: "Eroare la încărcare",
-                                description: e?.message || "Nu am putut actualiza fotografia.",
+                                description:
+                                  e?.message ||
+                                  "Nu am putut actualiza fotografia.",
                                 variant: "destructive" as any,
                               });
                             }
@@ -221,7 +227,10 @@ export default function Settings() {
                               "Pentru schimbarea emailului este necesară parola curentă.",
                             );
                           }
-                          await updateEmailWithReauth(emailPassword, newEmail.trim());
+                          await updateEmailWithReauth(
+                            emailPassword,
+                            newEmail.trim(),
+                          );
                           setEmailPassword("");
                         }
                         toast({
@@ -231,7 +240,8 @@ export default function Settings() {
                       } catch (e: any) {
                         toast({
                           title: "Eroare la salvare",
-                          description: e?.message || "Verifică datele introduse.",
+                          description:
+                            e?.message || "Verifică datele introduse.",
                           variant: "destructive" as any,
                         });
                       }
@@ -258,7 +268,9 @@ export default function Settings() {
                     </div>
                     {newEmail !== user.email && (
                       <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="emailPassword">Parola curentă (pentru schimbarea emailului)</Label>
+                        <Label htmlFor="emailPassword">
+                          Parola curentă (pentru schimbarea emailului)
+                        </Label>
                         <Input
                           id="emailPassword"
                           type="password"
@@ -294,12 +306,17 @@ export default function Settings() {
                         e.preventDefault();
                         try {
                           if (newPassword.length < 6) {
-                            throw new Error("Parola trebuie să aibă cel puțin 6 caractere.");
+                            throw new Error(
+                              "Parola trebuie să aibă cel puțin 6 caractere.",
+                            );
                           }
                           if (newPassword !== confirmPassword) {
                             throw new Error("Parolele nu coincid.");
                           }
-                          await updatePasswordWithReauth(currentPassword, newPassword);
+                          await updatePasswordWithReauth(
+                            currentPassword,
+                            newPassword,
+                          );
                           setCurrentPassword("");
                           setNewPassword("");
                           setConfirmPassword("");
@@ -310,7 +327,8 @@ export default function Settings() {
                         } catch (e: any) {
                           toast({
                             title: "Eroare la schimbare",
-                            description: e?.message || "Nu am putut schimba parola.",
+                            description:
+                              e?.message || "Nu am putut schimba parola.",
                             variant: "destructive" as any,
                           });
                         }
@@ -352,9 +370,9 @@ export default function Settings() {
                     </form>
                   ) : (
                     <div className="text-sm text-muted-foreground">
-                      Contul tău este conectat printr-un furnizor extern (de exemplu
-                      Google sau Facebook). Schimbarea parolei se face din contul
-                      furnizorului respectiv.
+                      Contul tău este conectat printr-un furnizor extern (de
+                      exemplu Google sau Facebook). Schimbarea parolei se face
+                      din contul furnizorului respectiv.
                     </div>
                   )}
                 </CardContent>
@@ -363,7 +381,8 @@ export default function Settings() {
               <Card className="border-destructive/30">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <Trash2 className="h-5 w-5 text-destructive" /> Zonă periculoasă
+                    <Trash2 className="h-5 w-5 text-destructive" /> Zonă
+                    periculoasă
                   </CardTitle>
                   <CardDescription>
                     Ștergerea contului este permanentă și ireversibilă.
@@ -372,7 +391,9 @@ export default function Settings() {
                 <CardContent className="space-y-3">
                   {passwordProviderLinked ? (
                     <div className="space-y-2">
-                      <Label htmlFor="deletePassword">Confirmă parola pentru a șterge contul</Label>
+                      <Label htmlFor="deletePassword">
+                        Confirmă parola pentru a șterge contul
+                      </Label>
                       <Input
                         id="deletePassword"
                         type="password"
@@ -383,8 +404,8 @@ export default function Settings() {
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      Pentru conturile conectate prin furnizor extern, confirmarea
-                      se va face prin re-autentificare.
+                      Pentru conturile conectate prin furnizor extern,
+                      confirmarea se va face prin re-autentificare.
                     </p>
                   )}
                   <Button
@@ -394,7 +415,9 @@ export default function Settings() {
                       try {
                         if (passwordProviderLinked) {
                           if (!deletePassword) {
-                            throw new Error("Introdu parola pentru a confirma.");
+                            throw new Error(
+                              "Introdu parola pentru a confirma.",
+                            );
                           }
                           await deleteAccountWithReauth(deletePassword);
                         } else {
@@ -413,7 +436,8 @@ export default function Settings() {
                       } catch (e: any) {
                         toast({
                           title: "Eroare la ștergere",
-                          description: e?.message || "Nu am putut șterge contul.",
+                          description:
+                            e?.message || "Nu am putut șterge contul.",
                           variant: "destructive" as any,
                         });
                       }

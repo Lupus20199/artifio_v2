@@ -12,7 +12,13 @@ import {
   User,
 } from "firebase/auth";
 import { doc, serverTimestamp, setDoc, getDoc } from "firebase/firestore";
-import { auth, db, storage, googleProvider, facebookProvider } from "./firebase";
+import {
+  auth,
+  db,
+  storage,
+  googleProvider,
+  facebookProvider,
+} from "./firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 async function ensureUserDocument(user: User, extra: Record<string, any> = {}) {
@@ -93,7 +99,10 @@ export async function updateProfilePhoto(file: File) {
   return url;
 }
 
-export async function updatePasswordWithReauth(currentPassword: string, newPassword: string) {
+export async function updatePasswordWithReauth(
+  currentPassword: string,
+  newPassword: string,
+) {
   const user = auth.currentUser;
   if (!user) throw new Error("Nu ești autentificat");
   if (!user.email) throw new Error("Contul nu are o adresă de email");
@@ -103,7 +112,10 @@ export async function updatePasswordWithReauth(currentPassword: string, newPassw
   await ensureUserDocument(user, { passwordUpdatedAt: serverTimestamp() });
 }
 
-export async function updateEmailWithReauth(currentPassword: string, newEmail: string) {
+export async function updateEmailWithReauth(
+  currentPassword: string,
+  newEmail: string,
+) {
   const user = auth.currentUser;
   if (!user) throw new Error("Nu ești autentificat");
   if (!user.email) throw new Error("Contul nu are o adresă de email");
